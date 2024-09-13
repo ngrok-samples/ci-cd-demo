@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: build-service
-        image: your-registry/build-service:latest
+        image: joelatngrok/ci-cd-demo:build-service
         ports:
         - containerPort: 8080
 ---
@@ -46,7 +46,7 @@ spec:
     spec:
       containers:
       - name: test-service
-        image: your-registry/test-service:latest
+        image: joelatngrok/ci-cd-demo:test-service
         ports:
         - containerPort: 8081
 ---
@@ -77,7 +77,7 @@ spec:
     spec:
       containers:
       - name: deployment-service
-        image: your-registry/deployment-service:latest
+        image: joelatngrok/ci-cd-demo:deployment-service
         ports:
         - containerPort: 8082
 ---

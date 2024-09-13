@@ -1,0 +1,58 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: cd-cd-demo-gatewayclass
+spec:
+  controllerName: ngrok.com/gateway-controller
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: ci-cd-demo-gateway
+spec:
+  gatewayClassName: ngrok
+  listeners:
+    - name: ci-cd-demo-listener
+      hostname: "{YOUR_NGROK_DOMAIN}"
+      port: 443
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: ngrokcert
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: ci-cd-demo-routes
+spec:
+  parentRefs:
+    - kind: Gateway
+      name: ci-cd-demo-gateway
+  hostnames:
+    - "{YOUR_NGROK_DOMAIN}"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /builds
+      backendRefs:
+        - name: build-service
+          port: 80
+          kind: Service
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /tests
+      backendRefs:
+        - name: test-service
+          port: 80
+          kind: Service
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /deployments
+      backendRefs:
+        - name: deployment-service
+          port: 80
+          kind: Service
